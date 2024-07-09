@@ -6,24 +6,19 @@ import '../models/task/task.dart';
 import '../models/error.dart';
 import './status_codes.dart' as status_codes;
 import './auth_provider.dart';
+import '../url.dart';
 
 class TaskProvider extends ChangeNotifier{
-  bool isLoading = true;
+  bool isLoading = false;
   String? errorMessage;
-  List<ObjectId>? taskIds;
   List<Task> tasks = [];
 
-  TaskProvider() {
-    _initTasks();
-  }
-
-  Future<void> _initTasks() async {
+  Future<void> getTasks(List<ObjectId> taskIds) async {
     isLoading = true;
     notifyListeners();
-    taskIds = AuthProvider().user!.userTasks;
-    for(ObjectId taskId in taskIds!){
+    for(ObjectId taskId in taskIds){
       final response = await http.get(
-        Uri.parse('/api/task/gettask/$taskId'),
+        Uri.parse('$baseURL/api/task/gettask/$taskId'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -48,7 +43,7 @@ class TaskProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.post(
-      Uri.parse('/api/task/createtask'),
+      Uri.parse('$baseURL/api/task/createtask'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -73,7 +68,7 @@ class TaskProvider extends ChangeNotifier{
     notifyListeners();
     ObjectId? taskId = task.taskId;
     final response = await http.put(
-      Uri.parse('/api/task/updatetask/$taskId'),
+      Uri.parse('$baseURL/api/task/updatetask/$taskId'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -97,7 +92,7 @@ class TaskProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.delete(
-      Uri.parse('/api/task/deletetask/$taskId'),
+      Uri.parse('$baseURL/api/task/deletetask/$taskId'),
       headers: {
         'Content-Type': 'application/json',
       },

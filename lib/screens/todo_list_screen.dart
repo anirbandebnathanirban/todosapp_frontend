@@ -8,6 +8,7 @@ import '../models/supervisor/supervisor.dart';
 import '../provider/task_provider.dart';
 import '../provider/supervisor_provider.dart';
 import '../provider/auth_provider.dart';
+import '../provider/screen_provider.dart';
 import '../widgets/loading.dart';
 
 class TodoListScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class TodoListScreen extends StatefulWidget {
 class _TodoListScreenState extends State<TodoListScreen> {
   bool isExpandAddTask = false;
   bool isExpandFilterTask = false;
+  bool isExpandTeamTask = false;
   bool isExpandTaskSupervisor = false;
   List<Task> tasks = [];
 
@@ -44,7 +46,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
   Widget build(BuildContext context) {
     var taskProvider = Provider.of<TaskProvider>(context);
     var supervisorProvider = Provider.of<SupervisorProvider>(context);
-    if(taskProvider.isLoading || supervisorProvider.isLoading){
+    var screenProvider = Provider.of<ScreenProvider>(context);
+    if(taskProvider.isLoading || supervisorProvider.isLoading || screenProvider.isLoading) {
       return const Loading();
     }
     else{
@@ -89,18 +92,22 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     isExpandAddTask = value;
                   });
                 },
-                leading: isExpandAddTask ? const Icon(Icons.remove_circle, color: Colors.yellowAccent) : const Icon(Icons.add_circle, color: Colors.blueAccent),
-                title: Text('Add Task', style: TextStyle(color: Color.lerp(Colors.black, Colors.white, 0.5))),
+                leading: isExpandAddTask ? const Icon(Icons.remove_circle, color: Colors.amber) : const Icon(Icons.add_circle, color: Colors.blueAccent),
+                title: const Text('Add Task', style: TextStyle(color: Colors.blueAccent)),
                 children: [
                   ListTile(
                     leading: const Icon(Icons.align_vertical_bottom, color: Colors.purpleAccent),
                     title: const Text('Create Task for me(self)', style: TextStyle(color: Colors.lightBlue)),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/addtaskself');
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.align_vertical_bottom, color: Colors.purpleAccent),
                     title: const Text('Create Task with Team Members(TeamWork)', style: TextStyle(color: Colors.lightBlue)),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/addtaskteam');
+                    },
                   ),
                 ],
               ),
@@ -110,8 +117,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     isExpandFilterTask = value;
                   });
                 },
-                leading: isExpandFilterTask ? const Icon(Icons.filter_list, color: Colors.yellowAccent) : const Icon(Icons.filter_list_alt, color: Colors.blueAccent),
-                title: Text('Settings', style: TextStyle(color: Color.lerp(Colors.black, Colors.white, 0.5)),),
+                leading: isExpandFilterTask ? const Icon(Icons.filter_list, color: Colors.amber) : const Icon(Icons.filter_list_alt, color: Colors.blueAccent),
+                title: const Text('Fliter Task', style: TextStyle(color: Colors.blueAccent)),
                 children: [
                   ListTile(
                     leading: const Icon(Icons.filter_1, color: Colors.purpleAccent),
@@ -147,9 +154,30 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 ],
               ),
               ListTile(
-                leading: const Icon(Icons.group, color: Colors.blueAccent),
-                title: const Text('Show Teams', style: TextStyle(color: Colors.lightBlue)),
+                leading: const Icon(Icons.person, color: Colors.blueAccent),
+                title: const Text('Add Supervisor', style: TextStyle(color: Colors.blueAccent)),
                 onTap: () {},
+              ),
+              ExpansionTile(
+                onExpansionChanged: (value) {
+                  setState(() {
+                    isExpandTeamTask = value;
+                  });
+                },
+                leading: isExpandTeamTask ? const Icon(Icons.group_remove, color: Colors.amber) : const Icon(Icons.group, color: Colors.blueAccent),
+                title: const Text('Team', style: TextStyle(color: Colors.blueAccent)),
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.align_horizontal_center, color: Colors.purpleAccent),
+                    title: const Text('Add Team', style: TextStyle(color: Colors.purpleAccent)),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.align_horizontal_center, color: Colors.purpleAccent),
+                    title: const Text('Show Teams', style: TextStyle(color: Colors.purpleAccent)),
+                    onTap: () {},
+                  ),
+                ],
               )
             ],
           ),

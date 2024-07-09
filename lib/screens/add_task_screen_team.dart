@@ -7,13 +7,14 @@ import '../models/task/task_timing_and_schedule.dart';
 import '../provider/auth_provider.dart';
 import '../provider/task_provider.dart';
 import '../widgets/add_supervisor.dart';
+import '../widgets/add_team.dart';
 
-class AddTaskScreenSelf extends StatefulWidget {
+class AddTaskScreenTeam extends StatefulWidget {
   @override
-  _AddTaskScreenSelfState createState() => _AddTaskScreenSelfState();
+  _AddTaskScreenTeamState createState() => _AddTaskScreenTeamState();
 }
 
-class _AddTaskScreenSelfState extends State<AddTaskScreenSelf> {
+class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
   String taskTitle = '';
   String taskDescription = '';
   String taskStatus = 'Pending';
@@ -30,6 +31,7 @@ class _AddTaskScreenSelfState extends State<AddTaskScreenSelf> {
   List<AddSupervisor> supervisorFormList = [];
   List<mongo.ObjectId> taskSupervisor = [];
 
+  mongo.ObjectId? taskTeam;
   BigInt? taskEstimatedTime;
 
   void _addTask(BuildContext context) {
@@ -56,6 +58,7 @@ class _AddTaskScreenSelfState extends State<AddTaskScreenSelf> {
           taskDueTime: taskDueTime,
         ),
         taskSupervisor: taskSupervisor,
+        taskTeam: taskTeam,
         taskEstimatedTime: taskEstimatedTime,
       ));
     }
@@ -65,7 +68,7 @@ class _AddTaskScreenSelfState extends State<AddTaskScreenSelf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Task (self)'),
+        title: Text('Add Task (Team)'),
       ),
       body: ListView(
         padding: EdgeInsets.zero,
@@ -253,6 +256,7 @@ class _AddTaskScreenSelfState extends State<AddTaskScreenSelf> {
                   })
             ],
           ),
+          AddTeam(),
           TextFormField(
             onChanged: (value) {
               taskEstimatedTime = BigInt.parse(value);
@@ -267,8 +271,10 @@ class _AddTaskScreenSelfState extends State<AddTaskScreenSelf> {
           ),
           TextButton.icon(
             onPressed: () {
-              supervisorFormList.forEach(
-                  (supervisor) => taskSupervisor.add(supervisor.supervisorId!));
+              for (AddSupervisor supervisor in supervisorFormList) {
+                taskSupervisor.add(supervisor.supervisorId!);
+              }
+              taskTeam = AddTeam().teamId;
               _addTask(context);
             },
             icon: const Icon(Icons.task, color: Colors.blueAccent),

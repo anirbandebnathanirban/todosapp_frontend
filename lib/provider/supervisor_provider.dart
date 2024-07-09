@@ -5,21 +5,18 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../models/supervisor/supervisor.dart';
 import '../models/error.dart';
 import './status_codes.dart' as status_codes;
+import '../url.dart';
 
 class SupervisorProvider extends ChangeNotifier{
-  bool isLoading = true;
+  bool isLoading = false;
   String? errorMessage;
   List<Supervisor> supervisors = [];
 
-  SupervisorProvider() {
-    _initSupervisors();
-  }
-
-  Future<void> _initSupervisors() async {
+  Future<void> getSupervisors() async {
     isLoading = true;
     notifyListeners();
     final response = await http.get(
-      Uri.parse('/api/supervisor/getallsupervisor'),
+      Uri.parse('$baseURL/api/supervisor/getallsupervisor'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -42,7 +39,7 @@ class SupervisorProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.get(
-      Uri.parse('/api/supervisor/getsupervisor/$supervisorId'),
+      Uri.parse('$baseURL/api/supervisor/getsupervisor/$supervisorId'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -65,7 +62,7 @@ class SupervisorProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.post(
-      Uri.parse('/api/supervisor/addsupervisor'),
+      Uri.parse('$baseURL/api/supervisor/addsupervisor'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -90,7 +87,7 @@ class SupervisorProvider extends ChangeNotifier{
     notifyListeners();
     ObjectId? supervisorId = supervisor.supervisorId;
     final response = await http.put(
-      Uri.parse('/api/supervisor/updatesupervisor/$supervisorId'),
+      Uri.parse('$baseURL/api/supervisor/updatesupervisor/$supervisorId'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -114,7 +111,7 @@ class SupervisorProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.delete(
-      Uri.parse('/api/supervisor/deletesupervisor/$supervisorId'),
+      Uri.parse('$baseURL/api/supervisor/deletesupervisor/$supervisorId'),
       headers: {
         'Content-Type': 'application/json',
       },

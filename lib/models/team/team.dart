@@ -1,6 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
-import 'team_basic_details.dart';
-import 'team_mettings.dart';
+import './team_basic_details.dart';
+import './team_mettings.dart';
 
 class Team{
   ObjectId? teamId;

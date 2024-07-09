@@ -6,9 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user/user.dart';
 import '../models/error.dart';
 import './status_codes.dart' as status_codes;
+import '../url.dart';
 
 class AuthProvider with ChangeNotifier{
-  bool isLoading = true;
+  bool isLoading = false;
+  bool isSignedIn = false;
+  bool isSignedUp = false;
   String? errorMessage;
   User? user;
   ObjectId? userId;
@@ -21,16 +24,25 @@ class AuthProvider with ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final token = await getToken();
+    if(token == null){
+      isLoading = false;
+      notifyListeners();
+      return;
+    }
+    isSignedUp = true;
+    notifyListeners();
     final response = await http.get(
-      Uri.parse('/api/auth/getuser'),
+      Uri.parse('$baseURL/api/auth/getuser'),
       headers: {
-        'Authorization' : token!,
+        'Authorization' : token,
         'Content-Type': 'application/json',
       }
     );
     isLoading = false;
     notifyListeners();
     if(response.statusCode == status_codes.USER_VERIFIED_WITH_AUTHENTICATION_TOKEN){
+      isSignedIn = true;
+      notifyListeners();
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       Map<String, dynamic> userJson = jsonResponse['user'];
       userId = userJson['_id'];
@@ -47,7 +59,7 @@ class AuthProvider with ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.post(
-      Uri.parse('/api/auth/signup'),
+      Uri.parse('$baseURL/api/auth/signup'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -71,7 +83,7 @@ class AuthProvider with ChangeNotifier{
     isLoading = true;
     notifyListeners();
     final response = await http.post(
-      Uri.parse('/api/auth/signin'),
+      Uri.parse('$baseURL/api/auth/signin'),
       headers: {
         'Content-Type': 'application/json',
       },
