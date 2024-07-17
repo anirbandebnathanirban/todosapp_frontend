@@ -18,10 +18,10 @@ class _AddSupervisorScreenState extends State<AddSupervisorScreen> {
   String supervisorPrimaryEmail = '';
 
   List<AddSecondaryEmail> secondaryEmailFormList = [AddSecondaryEmail()];
-  List<String> supervisorSecondaryEmails = [];
+  List<String>? supervisorSecondaryEmails;
 
   List<AddContactNumber> contactNumberFormList = [AddContactNumber()];
-  List<String> supervisorContactNumber = [];
+  List<String>? supervisorContactNumber;
 
   void _addSupervisor(BuildContext context) {
     if (supervisorFirstName.isEmpty ||
@@ -34,7 +34,8 @@ class _AddSupervisorScreenState extends State<AddSupervisorScreen> {
         ),
       );
     } else {
-      Provider.of<SupervisorProvider>(context).addSupervisor(Supervisor(
+      Provider.of<SupervisorProvider>(context, listen: false)
+          .addSupervisor(Supervisor(
         supervisorName: Supervisorname(
           supervisorFirstName: supervisorFirstName,
           supervisorMiddleName: supervisorMiddleName,
@@ -44,6 +45,7 @@ class _AddSupervisorScreenState extends State<AddSupervisorScreen> {
         supervisorSecondaryEmails: supervisorSecondaryEmails,
         supervisorContactNumber: supervisorContactNumber,
       ));
+      Navigator.pop(context);
     }
   }
 
@@ -113,57 +115,90 @@ class _AddSupervisorScreenState extends State<AddSupervisorScreen> {
                 return 'Primary Email is required';
               }
               String emailRegex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$';
-              if (!RegExp(emailRegex).hasMatch(value))
+              if (!RegExp(emailRegex).hasMatch(value)) {
                 return 'Enter a valid email address';
+              }
               return null;
             },
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              TextButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      secondaryEmailFormList.add(AddSecondaryEmail());
-                    });
-                  },
-                  icon: const Icon(Icons.add_box, color: Colors.blueAccent),
-                  label: const Text('Add Secondary Email',
-                      style: TextStyle(color: Colors.blueAccent))),
-              ListView.builder(
-                  itemCount: secondaryEmailFormList.length,
-                  itemBuilder: (context, index) {
-                    return secondaryEmailFormList[index];
-                  }),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          secondaryEmailFormList.add(AddSecondaryEmail());
+                        });
+                      },
+                      icon: const Icon(Icons.add_box, color: Colors.blueAccent),
+                      label: const Text('Add Secondary Email',
+                          style: TextStyle(color: Colors.blueAccent))),
+                  const SizedBox(height: 10),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: secondaryEmailFormList.length,
+                    itemBuilder: (context, index) {
+                      return secondaryEmailFormList[index];
+                    },
+                  ),
+                ],
+              )
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    contactNumberFormList.add(AddContactNumber());
-                  });
-                },
-                icon: const Icon(Icons.add_box, color: Colors.blueAccent),
-                label: const Text('Add Contact Number',
-                    style: TextStyle(color: Colors.blueAccent)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        contactNumberFormList.add(AddContactNumber());
+                      });
+                    },
+                    icon: const Icon(Icons.add_box, color: Colors.blueAccent),
+                    label: const Text('Add Contact Number',
+                        style: TextStyle(color: Colors.blueAccent)),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: contactNumberFormList.length,
+                    itemBuilder: (context, index) {
+                      return contactNumberFormList[index];
+                    },
+                  ),
+                ],
               ),
-              ListView.builder(
-                  itemCount: contactNumberFormList.length,
-                  itemBuilder: (context, index) {
-                    return contactNumberFormList[index];
-                  })
             ],
           ),
           TextButton.icon(
             onPressed: () {
+              List<String> tempSupervisorSecondaryEmails = [];
+              List<String> tempSupervisorContactNumber = [];
               for (AddSecondaryEmail secondaryEmail in secondaryEmailFormList) {
-                supervisorSecondaryEmails.add(secondaryEmail.secondaryEmail);
+                if (secondaryEmail.secondaryEmail.isNotEmpty) {
+                  tempSupervisorSecondaryEmails
+                      .add(secondaryEmail.secondaryEmail);
+                }
+              }
+              if (tempSupervisorSecondaryEmails.isNotEmpty) {
+                supervisorSecondaryEmails = tempSupervisorSecondaryEmails;
               }
               for (AddContactNumber contactNumber in contactNumberFormList) {
-                supervisorContactNumber.add(contactNumber.contactNumber);
+                if (contactNumber.contactNumber.isNotEmpty) {
+                  tempSupervisorContactNumber.add(contactNumber.contactNumber);
+                }
+              }
+              if (tempSupervisorContactNumber.isNotEmpty) {
+                supervisorContactNumber = tempSupervisorContactNumber;
               }
               _addSupervisor(context);
             },

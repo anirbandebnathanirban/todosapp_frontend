@@ -18,7 +18,7 @@ class Supervisor{
 
   Map<String, dynamic> toJson(){
     return {
-      '_id' : supervisorId,
+      '_id' : supervisorId?.toJson(),
       'supervisorName' : supervisorName.toJson(),
       'supervisorPrimaryEmail' : supervisorPrimaryEmail,
       'supervisorSecondaryEmails' : supervisorSecondaryEmails,
@@ -29,10 +29,10 @@ class Supervisor{
   factory Supervisor.fromJson(Map<String, dynamic> json){
     return Supervisor(
       supervisorId: ObjectId.parse(json['_id']),
-      supervisorName: json['supervisorName'], 
+      supervisorName: Supervisorname.fromJson(json['supervisorName']),
       supervisorPrimaryEmail: json['supervisorPrimaryEmail'],
-      supervisorSecondaryEmails: List<String>.from(json['supervisorSecondaryEmails']),
-      supervisorContactNumber: List<String>.from(json['supervisorContactNumber']),
+      supervisorSecondaryEmails: json['supervisorSecondaryEmails'] != null ? List<String>.from(json['supervisorSecondaryEmails']) : null,
+      supervisorContactNumber: json['supervisorContactNumber'] != null ? List<String>.from(json['supervisorContactNumber']) : null,
     );
   }
 }

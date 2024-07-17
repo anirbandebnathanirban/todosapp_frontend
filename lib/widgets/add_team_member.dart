@@ -17,43 +17,48 @@ class AddTeamMember extends StatefulWidget {
 }
 
 class _AddTeamMemberState extends State<AddTeamMember> {
-  Widget selectedUser = const Text('Nothing is selected', style: TextStyle(color: Colors.blueAccent));
+  Widget selectedUser = const Text('Nothing is selected',
+      style: TextStyle(color: Colors.blueAccent));
   User? user;
 
   @override
   Widget build(BuildContext context) {
-    List<User> users = Provider.of<UserProvider>(context).users;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+    List<User> users = Provider.of<UserProvider>(context, listen: false).users;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButton<User>(
-          hint: Text('Select ${widget.placeHolder}', style: const TextStyle(color: Colors.blueAccent)),
-          value: user,
-          items: users.map<DropdownMenuItem<User>>((User user) {
-            return DropdownMenuItem<User>(
-              value: user,
-              child: Text('${user.userName.userFirstName} ${user.userName.userLastName}', style: const TextStyle(color: Colors.blueAccent))
-            );
-          }).toList(), 
-          onChanged: (user) {
-            setState(() {
-              user = user;
-              widget.userId = user!.userId;
-              selectedUser = ListTile(
-                leading: const Icon(Icons.person, color: Colors.blueAccent),
-                title: Text('${user!.userName.userFirstName} ${user!.userName.userLastName}', style: const TextStyle(color: Colors.blueAccent)),
-                subtitle: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.email, color: Colors.blueAccent),
-                    Text('EMAIL: ${user!.userPrimaryEmail}', style: const TextStyle(color: Colors.blueAccent)),
-                  ],
-                )
-              );
-            });
-          }
-        ),
+            hint: Text('Select\n ${widget.placeHolder}',
+                style: const TextStyle(color: Colors.blueAccent)),
+            value: user,
+            items: users.map<DropdownMenuItem<User>>((User user) {
+              return DropdownMenuItem<User>(
+                  value: user,
+                  child: Text(
+                      '${user.userName.userFirstName} ${user.userName.userLastName}',
+                      style: const TextStyle(color: Colors.blueAccent)));
+            }).toList(),
+            onChanged: (user) {
+              setState(() {
+                user = user;
+                widget.userId = user!.userId;
+                selectedUser = ListTile(
+                    leading: const Icon(Icons.person, color: Colors.blueAccent),
+                    title: Text(
+                        '${user!.userName.userFirstName} ${user!.userName.userLastName}',
+                        style: const TextStyle(color: Colors.blueAccent)),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.email, color: Colors.blueAccent),
+                        Text('EMAIL: ${user!.userPrimaryEmail}',
+                            style: const TextStyle(color: Colors.blueAccent)),
+                      ],
+                    ));
+              });
+            }),
         selectedUser,
+        const SizedBox(height: 10),
       ],
     );
   }

@@ -23,7 +23,7 @@ class _AddTeamScreenState extends State<AddTeamScreen> {
   List<mongo.ObjectId> teamMembers = [];
 
   AddTeamMember teamLeaderForm =
-      AddTeamMember(placeHolder: 'Team Leader(By default you)');
+      AddTeamMember(placeHolder: 'Team Leader\n(By default you)');
   mongo.ObjectId? teamLeader;
 
   void _addTeam(BuildContext context) {
@@ -40,7 +40,7 @@ class _AddTeamScreenState extends State<AddTeamScreen> {
         ),
       );
     } else {
-      Provider.of<TeamProvider>(context).createTeam(Team(
+      Provider.of<TeamProvider>(context, listen: false).createTeam(Team(
         teamName: teamName,
         teamBasicDetails: Teambasicdetails(
             teamDescription: teamDescription,
@@ -49,6 +49,7 @@ class _AddTeamScreenState extends State<AddTeamScreen> {
         teamMembers: teamMembers,
         teamLeader: teamLeader!,
       ));
+      Navigator.pop(context);
     }
   }
 
@@ -110,6 +111,8 @@ class _AddTeamScreenState extends State<AddTeamScreen> {
                     style: TextStyle(color: Colors.blueAccent)),
               ),
               ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                   itemCount: teamMembersFormList.length,
                   itemBuilder: (context, index) {
                     return teamMembersFormList[index];
@@ -127,7 +130,7 @@ class _AddTeamScreenState extends State<AddTeamScreen> {
                 if (teamLeaderForm.userId != null) {
                   teamLeader = teamLeaderForm.userId;
                 } else {
-                  teamLeader = Provider.of<AuthProvider>(context).userId;
+                  teamLeader = Provider.of<AuthProvider>(context, listen: false).userId;
                 }
                 _addTeam(context);
               },

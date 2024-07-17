@@ -1,10 +1,10 @@
 class Taskbasicdetails{
-  String? taskDescription;
+  String taskDescription;
   String taskStatus;
   String taskPriority;
 
   Taskbasicdetails({
-    this.taskDescription,
+    required this.taskDescription,
     required this.taskStatus,
     required this.taskPriority,
   });

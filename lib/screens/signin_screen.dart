@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 import '../models/user/user.dart';
-import '../models/user/user_name.dart';
 import '../models/user/user_name.dart';
 import '../provider/auth_provider.dart';
 
@@ -18,7 +16,7 @@ class SigninScreen extends StatelessWidget {
         ),
       );
     } else {
-      Provider.of<AuthProvider>(context).userSignIn(User(
+      Provider.of<AuthProvider>(context, listen: false).userSignIn(User(
         username: username,
         userName: Username(
           userFirstName: 'dummyFirstName',
@@ -59,6 +57,7 @@ class SigninScreen extends StatelessWidget {
             onChanged: (value) {
               userPassword = value;
             },
+            obscureText: true,
             controller: TextEditingController(text: userPassword),
             decoration: const InputDecoration(
               icon: Icon(Icons.password, color: Colors.blueAccent),

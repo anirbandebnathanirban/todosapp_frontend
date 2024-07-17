@@ -23,7 +23,7 @@ class Team{
 
   Map<String, dynamic> toJson(){
     return {
-      '_id' : teamId,
+      '_id' : teamId?.toJson(),
       'teamName' : teamName,
       'teamBasicDetails' : teamBasicDetails.toJson(),
       'teamMembers' : teamMembers.map((teamMember) => teamMember.toJson()).toList(),

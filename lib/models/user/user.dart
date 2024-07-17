@@ -26,7 +26,7 @@ class User{
 
   Map<String, dynamic> toJson(){
     return {
-      '_id' : userId,
+      '_id' : userId?.toJson(),
       'username' : username,
       'userName' : userName.toJson(),
       'userPrimaryEmail' : userPrimaryEmail,
@@ -41,13 +41,13 @@ class User{
   factory User.fromJson(Map<String, dynamic> json){
     return User(
       userId: ObjectId.parse(json['_id']),
-      username: json['username'], 
+      username: json['username'],
       userName: Username.fromJson(json['userName']),
       userPrimaryEmail: json['userPrimaryEmail'], 
-      userSecondaryEmails: List<String>.from(json['userSecondaryEmails']),
+      userSecondaryEmails: json['userSecondaryEmails'] != null ? List<String>.from(json['userSecondaryEmails']) : null,
       userPassword: json['userPassword'],
-      userContactNumber: List<String>.from(json['userContactNumber']),
-      userTasks: json['userTasks'] != null 
+      userContactNumber: json['userContactNumber'] != null ? List<String>.from(json['userContactNumber']) : null,
+      userTasks: json['userTasks'] != null
         ? List<ObjectId>.from((json['userTasks'] as List).map((userTask) => ObjectId.parse(userTask))) 
         : null,
       userTeams: json['userTeams'] != null 

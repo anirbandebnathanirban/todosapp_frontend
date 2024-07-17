@@ -15,7 +15,7 @@ class Tasktimingandschedule{
     return {
       'taskCreationTime' : taskCreationTime.toString(),
       'taskStartTime' : taskStartTime.toString(),
-      'taskEndTime' : taskEndTime.toString(),
+      'taskEndTime' : taskEndTime?.toString(),
       'taskDueTime' : taskDueTime.toString(),
     };
   }
@@ -24,8 +24,8 @@ class Tasktimingandschedule{
     return Tasktimingandschedule(
       taskCreationTime: DateTime.parse(json['taskCreationTime']), 
       taskStartTime: DateTime.parse(json['taskStartTime']), 
-      taskEndTime: DateTime.parse(json['taskEndTime']),
-      taskDueTime: DateTime.parse(json['taskDueTime'])
+      taskEndTime: json['taskEndTime'] != null ? DateTime.parse(json['taskEndTime']) : null,
+      taskDueTime: DateTime.parse(json['taskDueTime']),
     );
   }
 }

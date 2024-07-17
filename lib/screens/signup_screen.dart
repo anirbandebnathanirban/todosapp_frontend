@@ -19,12 +19,12 @@ class _SignupScreenState extends State<SignupScreen> {
   String userPrimaryEmail = '';
 
   List<AddSecondaryEmail> secondaryEmailFormList = [AddSecondaryEmail()];
-  List<String> userSecondaryEmails = [];
+  List<String>? userSecondaryEmails;
 
   String userPassword = '';
 
   List<AddContactNumber> contactNumberFormList = [AddContactNumber()];
-  List<String> userContactNumber = [];
+  List<String>? userContactNumber;
 
   void _signupUser(BuildContext context) {
     if (username.isEmpty ||
@@ -39,7 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       );
     } else {
-      Provider.of<AuthProvider>(context).userSignUp(User(
+      Provider.of<AuthProvider>(context, listen: false).userSignUp(User(
         username: username,
         userName: Username(
             userFirstName: userFirstName,
@@ -49,6 +49,8 @@ class _SignupScreenState extends State<SignupScreen> {
         userSecondaryEmails: userSecondaryEmails,
         userPassword: userPassword,
         userContactNumber: userContactNumber,
+        userTasks: [],
+        userTeams: [],
       ));
     }
   }
@@ -139,8 +141,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 return 'User Primary Email is required';
               }
               String emailRegex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$';
-              if (!RegExp(emailRegex).hasMatch(value))
+              if (!RegExp(emailRegex).hasMatch(value)) {
                 return 'Enter a valid email address';
+              }
               return null;
             },
           ),
@@ -157,10 +160,13 @@ class _SignupScreenState extends State<SignupScreen> {
                   label: const Text('Add Secondary Email',
                       style: TextStyle(color: Colors.blueAccent))),
               ListView.builder(
-                  itemCount: secondaryEmailFormList.length,
-                  itemBuilder: (context, index) {
-                    return secondaryEmailFormList[index];
-                  })
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: secondaryEmailFormList.length,
+                itemBuilder: (context, index) {
+                  return secondaryEmailFormList[index];
+                },
+              ),
             ],
           ),
           TextFormField(
@@ -198,19 +204,34 @@ class _SignupScreenState extends State<SignupScreen> {
                     style: TextStyle(color: Colors.blueAccent)),
               ),
               ListView.builder(
-                  itemCount: contactNumberFormList.length,
-                  itemBuilder: (context, index) {
-                    return contactNumberFormList[index];
-                  })
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: contactNumberFormList.length,
+                itemBuilder: (context, index) {
+                  return contactNumberFormList[index];
+                },
+              ),
             ],
           ),
           TextButton.icon(
             onPressed: () {
+              List<String> tempUserSecondaryEmails = [];
+              List<String> tempUserContactNumber = [];
               for (AddSecondaryEmail secondaryEmail in secondaryEmailFormList) {
-                userSecondaryEmails.add(secondaryEmail.secondaryEmail);
+                if(secondaryEmail.secondaryEmail.isNotEmpty){
+                  tempUserSecondaryEmails.add(secondaryEmail.secondaryEmail);
+                }
+              }
+              if(tempUserSecondaryEmails.isNotEmpty){
+                userSecondaryEmails = tempUserSecondaryEmails;
               }
               for (AddContactNumber contactNumber in contactNumberFormList) {
-                userContactNumber.add(contactNumber.contactNumber);
+                if(contactNumber.contactNumber.isNotEmpty){
+                  tempUserContactNumber.add(contactNumber.contactNumber);
+                }
+              }
+              if(tempUserContactNumber.isNotEmpty){
+                userContactNumber = tempUserContactNumber;
               }
               _signupUser(context);
             },

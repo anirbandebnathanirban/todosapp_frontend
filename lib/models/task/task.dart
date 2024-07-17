@@ -30,7 +30,7 @@ class Task{
       'taskTitle' : taskTitle,
       'taskBasicDetails' : taskBasicDetails.toJson(),
       'taskTimingAndSchedule' : taskTimingAndSchedule.toJson(),
-      'taskSupervisor' : taskSupervisor!.map((supervisor) => supervisor.toJson()).toList(),
+      'taskSupervisor' : taskSupervisor?.map((supervisor) => supervisor.toJson()).toList(),
       'taskTeam' : taskTeam?.toJson(),
       'taskEstimatedTime' : taskEstimatedTime?.toString(),
     };
@@ -46,8 +46,8 @@ class Task{
       taskSupervisor: json['taskSupervisor'] != null 
         ? List<ObjectId>.from((json['taskSupervisor'] as List).map((taskSupervisor) => ObjectId.parse(taskSupervisor)))
         : null,
-      taskTeam: ObjectId.parse(json['taskTeam']),
-      taskEstimatedTime: BigInt.parse(json['taskEstimatedTime']),
+      taskTeam: json['taskTeam'] != null ? ObjectId.parse(json['taskTeam']) : null,
+      taskEstimatedTime: json['taskEstimationTime'] != null ? BigInt.parse(json['taskEstimationTime']) : null,
     );
   }
 }
