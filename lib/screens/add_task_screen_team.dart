@@ -27,10 +27,6 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
   DateTime? taskEndTime;
   DateTime? taskDueTime;
 
-  DateTime? startDate;
-  DateTime? endDate;
-  DateTime? dueDate;
-
   List<AddSupervisor> supervisorFormList = [AddSupervisor()];
   List<mongo.ObjectId>? taskSupervisor;
 
@@ -92,7 +88,7 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Task (teamwork)'),
+        title: const Text('Add Task (TeamWork)'),
       ),
       body: taskProvider.isLoading
           ? Loading()
@@ -154,7 +150,8 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                               value.isNotEmpty ? DateTime.parse(value) : null;
                         },
                         controller: TextEditingController(
-                            text: startDate?.toString().split(' ')[0] ?? ''),
+                            text:
+                                taskStartTime?.toString().split(' ')[0] ?? ''),
                         decoration: const InputDecoration(
                           label: Text('Start Date',
                               style: TextStyle(color: Colors.blueAccent)),
@@ -178,7 +175,7 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                           lastDate: DateTime(2100, 12, 31),
                         );
                         setState(() {
-                          startDate = dateTime;
+                          taskStartTime = dateTime;
                         });
                       },
                       icon: const Icon(
@@ -196,11 +193,12 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                     Expanded(
                       child: TextFormField(
                         onChanged: (value) {
+                          print(value.isNotEmpty);
                           taskEndTime =
                               value.isNotEmpty ? DateTime.parse(value) : null;
                         },
                         controller: TextEditingController(
-                            text: endDate?.toString().split(' ')[0] ?? ''),
+                            text: taskEndTime?.toString().split(' ')[0] ?? ''),
                         decoration: const InputDecoration(
                           label: Text('End Date',
                               style: TextStyle(color: Colors.blueAccent)),
@@ -224,7 +222,7 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                           lastDate: DateTime(2100, 12, 31),
                         );
                         setState(() {
-                          endDate = dateTime;
+                          taskEndTime = dateTime;
                         });
                       },
                       icon: const Icon(Icons.calendar_month,
@@ -240,11 +238,12 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                     Expanded(
                       child: TextFormField(
                         onChanged: (value) {
+                          print(value.isNotEmpty);
                           taskDueTime =
                               value.isNotEmpty ? DateTime.parse(value) : null;
                         },
                         controller: TextEditingController(
-                            text: dueDate?.toString().split(' ')[0] ?? ''),
+                            text: taskDueTime?.toString().split(' ')[0] ?? ''),
                         decoration: const InputDecoration(
                           label: Text('Due Date',
                               style: TextStyle(color: Colors.blueAccent)),
@@ -268,7 +267,7 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                           lastDate: DateTime(2100, 12, 31),
                         );
                         setState(() {
-                          dueDate = dateTime;
+                          taskDueTime = dateTime;
                         });
                       },
                       icon: const Icon(Icons.calendar_month,
@@ -327,7 +326,6 @@ class _AddTaskScreenTeamState extends State<AddTaskScreenTeam> {
                     if (tempTaskSupervisor.isNotEmpty) {
                       taskSupervisor = tempTaskSupervisor;
                     }
-                    taskTeam = taskTeamForm.teamId;
                     _addTask(taskProvider, authProvider, context);
                   },
                   icon: const Icon(Icons.task, color: Colors.blueAccent),

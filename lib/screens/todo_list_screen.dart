@@ -25,6 +25,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   bool isExpandTaskSupervisor = false;
   List<Task> tasks = [];
   List<Team> teams = [];
+  List<Supervisor> supervisors = [];
 
   void updateTask(
       TaskProvider taskProvider,
@@ -71,6 +72,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
     tasks = taskProvider.tasks;
     teams = teamProvider.teams;
+    supervisors = supervisorProvider.supervisors;
 
     return taskProvider.isLoading
         ? Loading()
@@ -192,7 +194,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                         onTap: () {},
                       ),
                       ListTile(
-                        leading: const Icon(Icons.filter_4,
+                        leading: const Icon(Icons.filter_5,
                             color: Colors.purpleAccent),
                         title: const Text(
                           'Filter By Date',
@@ -205,6 +207,27 @@ class _TodoListScreenState extends State<TodoListScreen> {
                             lastDate: DateTime(2100, 12, 31),
                           );
                         },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.filter_6,
+                            color: Colors.blueAccent),
+                        title: const Text('Filter By Start Time',
+                            style: TextStyle(color: Colors.blueAccent)),
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.filter_7,
+                            color: Colors.blueAccent),
+                        title: const Text('Filter By Due Time',
+                            style: TextStyle(color: Colors.blueAccent)),
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.filter_7,
+                            color: Colors.blueAccent),
+                        title: const Text('Filter By Team Task',
+                            style: TextStyle(color: Colors.blueAccent)),
+                        onTap: () {},
                       ),
                     ],
                   ),
@@ -258,17 +281,23 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 return TaskItem(
                   task: tasks[index],
                   onChanged: (Task task) {
-                    if(task.taskBasicDetails.taskStatus == 'Pending' || task.taskBasicDetails.taskStatus == 'In Progress' || task.taskBasicDetails.taskStatus == 'Not Completed') {
+                    if (task.taskBasicDetails.taskStatus == 'Pending' ||
+                        task.taskBasicDetails.taskStatus == 'In Progress' ||
+                        task.taskBasicDetails.taskStatus == 'Not Completed') {
                       task.taskBasicDetails.taskStatus = 'Completed';
-                    }
-                    else {
-                      if(DateTime.now().isAfter(task.taskTimingAndSchedule.taskCreationTime) && DateTime.now().isBefore(task.taskTimingAndSchedule.taskStartTime)) {
+                    } else {
+                      if (DateTime.now().isAfter(
+                              task.taskTimingAndSchedule.taskCreationTime) &&
+                          DateTime.now().isBefore(
+                              task.taskTimingAndSchedule.taskStartTime)) {
                         task.taskBasicDetails.taskStatus = 'Pending';
-                      }
-                      else if(DateTime.now().isAfter(task.taskTimingAndSchedule.taskStartTime) && DateTime.now().isBefore(task.taskTimingAndSchedule.taskDueTime)) {
+                      } else if (DateTime.now().isAfter(
+                              task.taskTimingAndSchedule.taskStartTime) &&
+                          DateTime.now().isBefore(
+                              task.taskTimingAndSchedule.taskDueTime)) {
                         task.taskBasicDetails.taskStatus = 'In Progress';
-                      }
-                      else if(DateTime.now().isAfter(task.taskTimingAndSchedule.taskDueTime)) {
+                      } else if (DateTime.now()
+                          .isAfter(task.taskTimingAndSchedule.taskDueTime)) {
                         task.taskBasicDetails.taskStatus = 'Not Completed';
                       }
                     }
@@ -281,9 +310,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
                           return AlertDialog(
                             title: const Text('Task Details',
                                 style: TextStyle(color: Colors.blueAccent)),
-                            content: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                            content: Container(
+                              width: 300,
+                              height: 800,
+                              child: ListView(
                                 children: [
                                   TextFormField(
                                     controller: TextEditingController(
@@ -331,7 +361,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                     controller: TextEditingController(
                                         text: task.taskTimingAndSchedule
                                             .taskCreationTime
-                                            .toString().split(' ')[0]),
+                                            .toString()
+                                            .split(' ')[0]),
                                     decoration: const InputDecoration(
                                         label: Text('Create Date',
                                             style: TextStyle(
@@ -343,7 +374,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                     controller: TextEditingController(
                                         text: task
                                             .taskTimingAndSchedule.taskStartTime
-                                            .toString().split(' ')[0]),
+                                            .toString()
+                                            .split(' ')[0]),
                                     decoration: const InputDecoration(
                                         label: Text('Start Date',
                                             style: TextStyle(
@@ -355,7 +387,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                     controller: TextEditingController(
                                         text: task
                                             .taskTimingAndSchedule.taskEndTime
-                                            .toString().split(' ')[0]),
+                                            .toString()
+                                            .split(' ')[0]),
                                     decoration: const InputDecoration(
                                         label: Text('End Date',
                                             style: TextStyle(
@@ -367,7 +400,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                     controller: TextEditingController(
                                         text: task
                                             .taskTimingAndSchedule.taskDueTime
-                                            .toString().split(' ')[0]),
+                                            .toString()
+                                            .split(' ')[0]),
                                     decoration: const InputDecoration(
                                         label: Text('Due Date',
                                             style: TextStyle(
@@ -401,51 +435,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                               itemCount:
                                                   task.taskSupervisor!.length,
                                               itemBuilder: (context, index) {
-                                                Future<Supervisor?> supervisor =
-                                                    supervisorProvider
-                                                        .getSupervisor(
-                                                            task.taskSupervisor![
-                                                                index]);
-                                                return FutureBuilder<
-                                                    Supervisor?>(
-                                                  future: supervisor,
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return const CircularProgressIndicator();
-                                                    } else if (snapshot
-                                                        .hasError) {
-                                                      return Text(
-                                                          'Error: ${snapshot.error}');
-                                                    } else if (snapshot
-                                                        .hasData) {
-                                                      Supervisor? supervisor =
-                                                          snapshot.data;
-                                                      return TextFormField(
-                                                        controller: TextEditingController(
-                                                            text: supervisor!
-                                                                .supervisorName
-                                                                .supervisorFirstName),
-                                                        decoration:
-                                                            InputDecoration(
-                                                          icon: const Icon(
-                                                              Icons.person,
-                                                              color: Colors
-                                                                  .blueAccent),
-                                                          label: Text(
-                                                              'Supervisor ${index + 1}',
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .blueAccent)),
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      return Container();
-                                                    }
-                                                  },
-                                                );
+                                                Supervisor supervisor = supervisors.firstWhere((supervisor) => supervisor.supervisorId == task.taskSupervisor![index]);
+                                                return Text('${index+1} ${supervisor.supervisorName.supervisorFirstName} ${supervisor.supervisorName.supervisorLastName}', style: const TextStyle(color: Colors.blueAccent));
                                               },
                                             )
                                           ],
@@ -498,9 +489,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                             TextStyle(color: Colors.blueAccent))
                                   ],
                                 )
-                              : SingleChildScrollView(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+                              : Container(
+                                  width: 200,
+                                  height: 800,
+                                  child: ListView(
                                     children: [
                                       TextFormField(
                                         onChanged: (title) {
@@ -558,7 +550,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                         controller: TextEditingController(
                                             text: task.taskTimingAndSchedule
                                                 .taskCreationTime
-                                                .toString().split(' ')[0]),
+                                                .toString()
+                                                .split(' ')[0]),
                                         decoration: const InputDecoration(
                                             label: Text('Create Date',
                                                 style: TextStyle(
@@ -574,7 +567,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                         controller: TextEditingController(
                                             text: task.taskTimingAndSchedule
                                                 .taskStartTime
-                                                .toString().split(' ')[0]),
+                                                .toString()
+                                                .split(' ')[0]),
                                         decoration: const InputDecoration(
                                             label: Text('Start Date',
                                                 style: TextStyle(
@@ -589,7 +583,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                         controller: TextEditingController(
                                             text: task.taskTimingAndSchedule
                                                 .taskEndTime
-                                                .toString().split(' ')[0]),
+                                                .toString()
+                                                .split(' ')[0]),
                                         decoration: const InputDecoration(
                                             label: Text('End Date',
                                                 style: TextStyle(
@@ -604,7 +599,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                         controller: TextEditingController(
                                             text: task.taskTimingAndSchedule
                                                 .taskDueTime
-                                                .toString().split(' ')[0]),
+                                                .toString()
+                                                .split(' ')[0]),
                                         decoration: const InputDecoration(
                                             label: Text('Due Date',
                                                 style: TextStyle(
@@ -623,7 +619,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                               leading: isExpandTaskSupervisor
                                                   ? const Icon(Icons.close,
                                                       color: Colors.redAccent)
-                                                  : Icon(Icons.remove_circle,
+                                                  : const Icon(
+                                                      Icons.remove_circle,
                                                       color: Colors.blueAccent),
                                               title: Text('Supervisors',
                                                   style: TextStyle(
@@ -640,54 +637,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                                       .taskSupervisor!.length,
                                                   itemBuilder:
                                                       (context, index) {
-                                                    Future<Supervisor?>
-                                                        supervisor =
-                                                        supervisorProvider
-                                                            .getSupervisor(
-                                                                task.taskSupervisor![
-                                                                    index]);
-                                                    return FutureBuilder<
-                                                        Supervisor?>(
-                                                      future: supervisor,
-                                                      builder:
-                                                          (context, snapshot) {
-                                                        if (snapshot
-                                                                .connectionState ==
-                                                            ConnectionState
-                                                                .waiting) {
-                                                          return const CircularProgressIndicator();
-                                                        } else if (snapshot
-                                                            .hasError) {
-                                                          return Text(
-                                                              'Error: ${snapshot.error}');
-                                                        } else if (snapshot
-                                                            .hasData) {
-                                                          Supervisor?
-                                                              supervisor =
-                                                              snapshot.data;
-                                                          return TextFormField(
-                                                            controller: TextEditingController(
-                                                                text: supervisor!
-                                                                    .supervisorName
-                                                                    .supervisorFirstName),
-                                                            decoration:
-                                                                InputDecoration(
-                                                              icon: const Icon(
-                                                                  Icons.person,
-                                                                  color: Colors
-                                                                      .blueAccent),
-                                                              label: Text(
-                                                                  'Supervisor ${index + 1}',
-                                                                  style: const TextStyle(
-                                                                      color: Colors
-                                                                          .blueAccent)),
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          return Container();
-                                                        }
-                                                      },
-                                                    );
+                                                    Supervisor supervisor = supervisors.firstWhere((supervisor) => supervisor.supervisorId == task.taskSupervisor![index]);
+                                                    return Text('${index+1} ${supervisor.supervisorName.supervisorFirstName} ${supervisor.supervisorName.supervisorLastName}', style: const TextStyle(color: Colors.blueAccent));
                                                   },
                                                 )
                                               ],

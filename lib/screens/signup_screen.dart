@@ -173,6 +173,7 @@ class _SignupScreenState extends State<SignupScreen> {
             onChanged: (value) {
               userPassword = value;
             },
+            obscureText: true,
             controller: TextEditingController(text: userPassword),
             decoration: const InputDecoration(
               icon: Icon(Icons.password, color: Colors.blueAccent),
